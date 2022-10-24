@@ -23,6 +23,15 @@
 
     <developers>
         <developer>
+            <id>stroppycow</id>
+            <name>Théo Leroy</name>
+            <url>http://github.com/stroppycow</url>
+            <roles>
+                <role>developer</role>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+        <developer>
             <id>carschno</id>
             <name>Carsten Schnober</name>
             <url>http://github.com/carschno</url>
