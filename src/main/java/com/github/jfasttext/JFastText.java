@@ -268,10 +268,10 @@ public class JFastText {
     }
 
     public static class ProbLabel {
-        public float logProb;
+        public double logProb;
         public String label;
-        public ProbLabel(float logProb, String label) {
-            this.logProb = logProb;
+        public ProbLabel(float prob, String label) {
+            this.logProb = Math.log(prob);
             this.label = label;
         }
         @Override

@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.carschno</groupId>
+    <groupId>io.github.stroppycow</groupId>
     <artifactId>jfasttext</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
     <name>Java interface for fastText</name>
     <description>
         JFastText is a Java interface for fastText, a library for efficient learning of
@@ -59,7 +59,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javacpp.version>1.5.1</javacpp.version>
+        <javacpp.version>1.5.7</javacpp.version>
     </properties>
 
     <distributionManagement>
@@ -221,7 +221,9 @@
                                 </classOrPackageName>
                             </classOrPackageNames>
                             <compilerOptions>
-                                <compilerOption>-std=c++0x</compilerOption>
+                                <compilerOption>-std=c++11</compilerOption>
+                                <compilerOption>-DNDEBUG</compilerOption>
+                                <compilerOption>-pthread</compilerOption>
                                 <compilerOption>-I${project.build.sourceDirectory}/../cpp</compilerOption>
                             </compilerOptions>
                         </configuration>
