@@ -21,7 +21,7 @@ jobs:
       - run: mkdir staging && cp target/*.jar staging
       - uses: actions/upload-artifact@v3
         with:
-          name: Package Windows
+          name: Package Linux
           path: staging
   
   build_windows:
