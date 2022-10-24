@@ -18,6 +18,11 @@ jobs:
       
       - name: Build with Maven Linux
         run: mvn --batch-mode --update-snapshots package
+      - run: mkdir staging && cp target/*.jar staging
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Package Windows
+          path: staging
   
   build_windows:
     runs-on: windows-latest
@@ -34,3 +39,8 @@ jobs:
           distribution: 'adopt'
       - name: Build with Maven Windows
         run: mvn --batch-mode --update-snapshots package
+      - run: mkdir staging && cp target/*.jar staging
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Package Windows
+          path: staging
