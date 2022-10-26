@@ -335,6 +335,7 @@ public class FastTextWrapper extends com.github.jfasttext.config.FastTextWrapper
 
 // Added <numeric> since VS 14.0 complains about missing std::iota
 // #include <numeric>
+// #include "fastText/src/autotune.cc"
 // #include "fastText/src/args.cc"
 // #include "fastText/src/densematrix.cc"
 // #include "fastText/src/dictionary.cc"
