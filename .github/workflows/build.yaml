@@ -14,18 +14,15 @@ jobs:
         run: |
           apt-get update
           apt-get install build-essential openjdk-7-jre openjdk-7-jdk maven git -y
-      - name: Checkout repository and submodules
+      - name: Checkout repository and submodules and build
         run: |
           git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY
           export GITHUB_REPOSITORY_NAME=$(echo $GITHUB_REPOSITORY  | awk '{split($0,a,"/"); print a[2]}')
           cd $GITHUB_REPOSITORY_NAME
           git submodule update --init --recursive
-      - name: Build with Maven Linux
-        run: |
-          echo $GITHUB_REPOSITORY_NAME
-          cd $GITHUB_REPOSITORY_NAME
-          mvn --batch-mode --update-snapshots package
-      - run: mkdir staging && cp target/*jar staging
+          mvn --batch-mode --update-snapshots "-Djar.finalName=jfasttext-linux" package
+          mkdir staging
+          cp target/jfasttext-linux.jar staging
       - uses: actions/upload-artifact@v3
         with:
           name: Package Linux
@@ -45,8 +42,8 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build with Maven Windows
-        run: mvn --batch-mode --update-snapshots package 
-      - run: mkdir staging && cp target/*.jar staging
+        run: mvn --batch-mode --update-snapshots "-Djar.finalName=jfasttext-windows" package 
+      - run: mkdir staging && cp target/jfasttext-windows.jar staging
       - uses: actions/upload-artifact@v3
         with:
           name: Package Windows
