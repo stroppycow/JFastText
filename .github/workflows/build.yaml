@@ -15,11 +15,12 @@ jobs:
           apt-get update
           apt-get install build-essential openjdk-7-jre openjdk-7-jdk maven git -y
       - name: Checkout repository and submodules and build
+        shell: bash
         run: |
           git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY
           export GITHUB_REPOSITORY_NAME=$(echo $GITHUB_REPOSITORY  | awk '{split($0,a,"/"); print a[2]}')
           cd $GITHUB_REPOSITORY_NAME
-          if [[ $GITHUB_REF_TYPE == "branch" ]]; then
+          if [[ $GITHUB_REF_TYPE -eq branch ]]; then
             git checkout -b $GITHUB_REF_NAME
           else
             git checkout tags/$GITHUB_REF_NAME -b $GITHUB_REF_NAME-branch
