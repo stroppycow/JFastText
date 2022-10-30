@@ -21,7 +21,10 @@ jobs:
           cd $GITHUB_REPOSITORY_NAME
           git submodule update --init --recursive
       - name: Build with Maven Linux
-        run: mvn --batch-mode --update-snapshots package
+        run: |
+          ls -a
+          cat pom.xml
+          mvn --batch-mode --update-snapshots package
       - run: mkdir staging && cp target/*jar staging
       - uses: actions/upload-artifact@v3
         with:
