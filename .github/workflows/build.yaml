@@ -17,9 +17,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Checkout submodule fasttext
-        run: git submodule update --init --recursive
+        run: |
+          ls -a
+          cd JFastText
+          git submodule update --init --recursive
       - name: Build with Maven Linux
-        run: mvn --batch-mode --update-snapshots package -Djar.finalName=jfasttext-linux
+        run: mvn --batch-mode --update-snapshots -Djar.finalName=jfasttext-linux package
       - run: mkdir staging && cp target/jfasttext-linux.jar staging
       - uses: actions/upload-artifact@v3
         with:
@@ -40,7 +43,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build with Maven Windows
-        run: mvn --batch-mode --update-snapshots package -Djar.finalName=jfasttext-windows
+        run: mvn --batch-mode --update-snapshots -Djar.finalName=jfasttext-windows package 
       - run: mkdir staging && cp target/jfasttext-windows.jar staging
       - uses: actions/upload-artifact@v3
         with:
