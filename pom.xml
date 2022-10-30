@@ -11,6 +11,7 @@
     <description>
         JFastText is a Java interface for fastText, a library for efficient learning of
         word representations and sentence classification.
+        This project was forked from the upstream carschno/JFasttext project.
     </description>
     <packaging>jar</packaging>
     <url>http://maven.apache.org</url>
@@ -28,33 +29,14 @@
             <url>http://github.com/stroppycow</url>
             <roles>
                 <role>developer</role>
-                <role>maintainer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>carschno</id>
-            <name>Carsten Schnober</name>
-            <url>http://github.com/carschno</url>
-            <roles>
-                <role>developer</role>
-                <role>maintainer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>vinhkhuc</id>
-            <name>Vinh Khuc</name>
-            <url>http://github.com/vinhkhuc</url>
-            <roles>
-                <role>architect</role>
-                <role>developer</role>
             </roles>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/carschno/JFastText.git</connection>
-        <developerConnection>scm:git:git@github.com:carschno/JFastText.git</developerConnection>
-        <url>https://github.com/carschno/JFastText</url>
+        <connection>scm:git:https://github.com/stroppycow/JFastText.git</connection>
+        <developerConnection>scm:git:git@github.com:stroppycow/JFastText.git</developerConnection>
+        <url>https://github.com/stroppycow/JFastText</url>
     </scm>
 
     <properties>
@@ -65,11 +47,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
-            <url>https://oss.c.org/service/local/staging/deploy/maven2/</url>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 

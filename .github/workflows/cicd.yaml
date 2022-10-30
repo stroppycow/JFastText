@@ -97,17 +97,28 @@ jobs:
         with:
           name: Package MacOSX
           path: ~/download
+      - name: Checkout project
+        uses: actions/checkout@v3
+      - name: Copy pom
+        run:
+          cp pom.xml ~/download/pom.xml
       - name: Build merged jar
+        shell: bash
         run: |
           cd ~/download
           ls -a
           unzip -o jfasttext-windows.jar 
           unzip -o jfasttext-macosx.jar 
           unzip -o jfasttext-linux.jar
-          zip -r jfasttext.jar com META-INF
+          PROJECT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version)    
+          zip -r jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar com META-INF
+          rm jfasttext-windows.jar 
+          rm jfasttext-macosx.jar 
+          rm jfasttext-linux.jar
+          ls -a
       - uses: actions/upload-artifact@v3
         with:
           name: Package multi-platform
-          path: ~/download/jfasttext.jar
+          path: ~/download/*.jar
 
   
