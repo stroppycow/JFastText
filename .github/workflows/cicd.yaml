@@ -110,7 +110,8 @@ jobs:
           unzip -o jfasttext-windows.jar 
           unzip -o jfasttext-macosx.jar 
           unzip -o jfasttext-linux.jar
-          PROJECT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version)    
+          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo ${PROJECT_VERSION}
           zip -r jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar com META-INF
           rm jfasttext-windows.jar 
           rm jfasttext-macosx.jar 
