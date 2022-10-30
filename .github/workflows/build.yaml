@@ -5,20 +5,23 @@ on: [push]
 jobs:
   build_linux:
     runs-on: ubuntu-latest
+    container:
+      image: debian:8
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
-      - name: Set up JDK 11
+
+      - name: Install dependencies (openjdk, maven)
+        run: |
+          apt-get update
+          apt-get install build-essential openjdk-7-jre openjdk-7-jdk maven git
         uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-      
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Checkout submodule fasttext
+        run: git submodule update --init --recursive
       - name: Build with Maven Linux
-        run: mvn --batch-mode --update-snapshots package
-      - run: mkdir staging && cp target/*.jar staging
+        run: mvn --batch-mode --update-snapshots package -Djar.finalName=jfasttext-linux
+      - run: mkdir staging && cp target/jfasttext-linux.jar staging
       - uses: actions/upload-artifact@v3
         with:
           name: Package Linux
@@ -38,8 +41,8 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build with Maven Windows
-        run: mvn --batch-mode --update-snapshots package
-      - run: mkdir staging && cp target/*.jar staging
+        run: mvn --batch-mode --update-snapshots package -Djar.finalName=jfasttext-windows
+      - run: mkdir staging && cp target/jfasttext-windows.jar staging
       - uses: actions/upload-artifact@v3
         with:
           name: Package Windows
