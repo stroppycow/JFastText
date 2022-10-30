@@ -1,4 +1,4 @@
-name: Java CI
+name: Java CICD
 
 on: [push]
 
@@ -97,6 +97,11 @@ jobs:
         with:
           name: Package MacOSX
           path: ~/download
+      - name: Checkout project
+        uses: actions/checkout@v3
+      - name: Copy pom
+        run:
+          cp pom.xml ~/download/pom.xml
       - name: Build merged jar
         shell: bash
         run: |
@@ -105,7 +110,7 @@ jobs:
           unzip -o jfasttext-windows.jar 
           unzip -o jfasttext-macosx.jar 
           unzip -o jfasttext-linux.jar
-          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo ${PROJECT_VERSION}
           zip -r jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar com META-INF
           rm jfasttext-windows.jar 
@@ -140,9 +145,10 @@ jobs:
         run:
           cp pom.xml ~/download/pom.xml
       - name: Publish package
+        shell: bash
         run: |
           cd ~/download
-          PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           mvn --batch-mode release:update-versions -DdevelopmentVersion=${PROJECT_VERSION}-SNAPSHOT
           mvn gpg:sign-and-deploy-file -Durl=https://s01.oss.sonatype.org/content/repositories/snapshots/ -DrepositoryId=ossrh -DpomFile=pom.xml -Dfile=jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar
         env:
