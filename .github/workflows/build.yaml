@@ -21,12 +21,12 @@ jobs:
           cd $GITHUB_REPOSITORY_NAME
           git submodule update --init --recursive
           mvn --batch-mode --update-snapshots "-Djar.finalName=jfasttext-linux" package
-          mkdir staging
-          cp target/jfasttext-linux.jar staging
+          mkdir /staging
+          cp target/jfasttext-linux.jar /staging
       - uses: actions/upload-artifact@v3
         with:
           name: Package Linux
-          path: staging
+          path: /staging
   
   build_windows:
     runs-on: windows-latest
