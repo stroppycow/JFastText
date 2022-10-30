@@ -16,7 +16,7 @@ jobs:
           apt-get install build-essential openjdk-7-jre openjdk-7-jdk maven git -y
       - name: Checkout repository and submodules
         run: |
-          git clone $GITHUB_SERVER_URL:$GITHUB_REPOSITORY
+          git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY
           export GITHUB_REPOSITORY_NAME=$((echo $GITHUB_REPOSITORY ) | awk '{split($0,a,"/"); print a[2]}')
           cd $GITHUB_REPOSITORY_NAME
           git submodule update --init --recursive
