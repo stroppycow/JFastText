@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository and submodules
         run: |
           git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY
-          export GITHUB_REPOSITORY_NAME=$((echo $GITHUB_REPOSITORY ) | awk '{split($0,a,"/"); print a[2]}')
+          export GITHUB_REPOSITORY_NAME=$(echo $GITHUB_REPOSITORY  | awk '{split($0,a,"/"); print a[2]}')
           cd $GITHUB_REPOSITORY_NAME
           git submodule update --init --recursive
       - name: Build with Maven Linux
@@ -42,8 +42,8 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build with Maven Windows
-        run: mvn --batch-mode --update-snapshots -Djar.finalName=jfasttext-windows package 
-      - run: mkdir staging && cp target/jfasttext-windows.jar staging
+        run: mvn --batch-mode --update-snapshots package 
+      - run: mkdir staging && cp target/*.jar staging
       - uses: actions/upload-artifact@v3
         with:
           name: Package Windows
