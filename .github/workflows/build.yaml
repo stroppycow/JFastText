@@ -17,9 +17,14 @@ jobs:
       - name: Checkout repository and submodules and build
         run: |
           git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY
-          git checkout -b $GITHUB_REF_NAME
           export GITHUB_REPOSITORY_NAME=$(echo $GITHUB_REPOSITORY  | awk '{split($0,a,"/"); print a[2]}')
           cd $GITHUB_REPOSITORY_NAME
+          if [[ $GITHUB_REF_TYPE == branch ]]; then
+            git checkout -b $GITHUB_REF_NAME
+          else
+            git checkout tags/$GITHUB_REF_TYPE -b $GITHUB_REF_TYPE-branch
+          fi
+          
           git submodule update --init --recursive
           mvn --batch-mode --update-snapshots "-Djar.finalName=jfasttext-linux" package
           mkdir /staging
