@@ -97,6 +97,14 @@ jobs:
         with:
           name: Package MacOSX
           path: ~/download
+      - name: Set up Maven Central Repository
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
       - name: Checkout project
         uses: actions/checkout@v3
       - name: Copy pom
@@ -117,9 +125,18 @@ jobs:
           rm jfasttext-macosx.jar 
           rm jfasttext-linux.jar
           ls -a
+          mvn --batch-mode release:update-versions -DdevelopmentVersion=${PROJECT_VERSION}-SNAPSHOT
+          echo $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
       - uses: actions/upload-artifact@v3
         with:
           name: Package multi-platform
           path: ~/download/*.jar
+      - name: Publish package
+        run: |
+          cd ~/download
+          mvn gpg:sign-and-deploy-file -Durl=https://s01.oss.sonatype.org/content/repositories/snapshots/ -DrepositoryId=ossrh -DpomFile=pom.xml -Dfile=jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
 
   
