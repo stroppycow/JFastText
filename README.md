@@ -32,12 +32,22 @@ JFastText is ideal for building fast text classifiers in Java.
 <dependency>
   <groupId>io.github.stroppycow</groupId>
   <artifactId>jfasttext</artifactId>
-  <version>0.9.2</version>
+  <version>0.9.2-SNAPSHOT</version>
 </dependency>
 ```
-The Jar package on Maven Central is bundled with precompiled fastText library for Windows, Linux  and
+The Jar package on Maven Central Snapshot is bundled with precompiled fastText library for Windows, Linux  and
 MacOSX 64bit.
 
+For snpshots, you need to add those lines to your `settings.xml` file.
+```xml
+<repository>
+    <id>snapshots-repo</id>
+    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    <releases><enabled>false</enabled></releases>
+    <snapshots><enabled>true</enabled></snapshots>
+    <layout>default </layout>
+</repository>
+```
 
 ## Building
 C++ compiler (g++ on Mac/Linux or `cl.exe` on Windows) is required to compile fastText's code.
