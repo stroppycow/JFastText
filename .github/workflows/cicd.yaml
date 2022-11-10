@@ -157,5 +157,42 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  
+  deploy_release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [merge_build]
+    steps:
+      - name: Download JAR Linux
+        uses: actions/download-artifact@v3
+        with:
+          name: Package multi-platform
+          path: ~/download
+      - name: Set up Maven Central Repository
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }} 
+          gpg-passphrase: GPG_PASSPHRASE 
+      - name: Checkout project
+        uses: actions/checkout@v3
+      - name: Copy pom
+        run:
+          cp pom.xml ~/download/pom.xml
+      - name: Publish package
+        shell: bash
+        run: |
+          cd ~/download
+          PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          cp jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar jfasttext-${PROJECT_VERSION}.jar
+          mvn gpg:sign-and-deploy-file -Durl=https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=ossrh -DpomFile=pom.xml -Dfile=jfasttext-${PROJECT_VERSION}.jar
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
   
