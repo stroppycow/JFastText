@@ -27,9 +27,12 @@ jobs:
           fi
           
           git submodule update --init --recursive
-          mvn --batch-mode --update-snapshots "-Djar.finalName=jfasttext-linux" package
+          mvn --batch-mode --update-snapshots package
+          PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           mkdir /staging
-          cp target/jfasttext-linux.jar /staging
+          cp target/jfasttext-$PROJECT_VERSION.jar /staging/jfasttext-linux.jar
+          cp target/jfasttext-$PROJECT_VERSION-javadoc.jar /staging/jfasttext-linux-javadoc.jar
+          cp target/jfasttext-$PROJECT_VERSION-sources.jar /staging/jfasttext-linux-sources.jar
       - uses: actions/upload-artifact@v3
         with:
           name: Package Linux
@@ -49,8 +52,14 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build with Maven Windows
-        run: mvn --batch-mode --update-snapshots "-Djar.finalName=jfasttext-windows" package 
-      - run: mkdir staging && cp target/jfasttext-windows.jar staging
+        run: mvn --batch-mode --update-snapshots package 
+      - shell: pwsh
+        run: |
+          $PROJECT_VERSION=(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) | Out-String
+          New-Item -Path . -Name "staging" -ItemType "directory"
+          Copy-Item "target/jfasttext-$PROJECT_VERSION.jar" -Destination staging/jfasttext-windows.jar
+          Copy-Item "target/jfasttext-$PROJECT_VERSION-javadoc.jar" -Destination staging/jfasttext-windows-javadoc.jar
+          Copy-Item "target/jfasttext-$PROJECT_VERSION-sources.jar" -Destination staging/jfasttext-windows-sources.jar
       - uses: actions/upload-artifact@v3
         with:
           name: Package Windows
@@ -70,8 +79,13 @@ jobs:
           distribution: 'adopt'
       
       - name: Build with Maven MacOS
-        run: mvn --batch-mode --update-snapshots "-Djar.finalName=jfasttext-macosx" package
-      - run: mkdir staging && cp target/jfasttext-macosx.jar staging
+        run: mvn --batch-mode --update-snapshots package
+      - run: |
+          PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          mkdir staging
+          cp target/jfasttext-$PROJECT_VERSION.jar staging/jfasttext-macosx.jar
+          cp target/jfasttext-$PROJECT_VERSION-javadoc.jar staging/jfasttext-macosx-javadoc.jar
+          cp target/jfasttext-$PROJECT_VERSION-sources.jar staging/jfasttext-macosx-sources.jar
       - uses: actions/upload-artifact@v3
         with:
           name: Package MacOSX
@@ -106,21 +120,44 @@ jobs:
         shell: bash
         run: |
           cd ~/download
-          ls -a
-          unzip -o jfasttext-windows.jar 
-          unzip -o jfasttext-macosx.jar 
-          unzip -o jfasttext-linux.jar
+          mkdir output
           PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo ${PROJECT_VERSION}
-          zip -r jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar com META-INF
-          rm jfasttext-windows.jar 
-          rm jfasttext-macosx.jar 
-          rm jfasttext-linux.jar
-          ls -a         
+
+          mkdir work
+          unzip -o jfasttext-windows.jar -d work
+          unzip -o jfasttext-macosx.jar -d work
+          unzip -o jfasttext-linux.jar -d work
+          cd work
+          zip -r jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar .
+          mv jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar ../output/jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar
+          cd ..
+          rm -rf work
+
+          mkdir work
+          unzip -o jfasttext-windows-javadoc.jar -d work
+          unzip -o jfasttext-macosx-javadoc.jar -d work
+          unzip -o jfasttext-linux-javadoc.jar -d work
+          cd work
+          zip -r jfasttext-${PROJECT_VERSION}-javadoc.jar .
+          mv jfasttext-${PROJECT_VERSION}-javadoc.jar ../output/jfasttext-${PROJECT_VERSION}-javadoc.jar
+          cd ..
+          rm -rf work
+
+          mkdir work
+          unzip -o jfasttext-windows-sources.jar -d work
+          unzip -o jfasttext-macosx-sources.jar -d work
+          unzip -o jfasttext-linux-sources.jar -d work
+          cd work
+          zip -r jfasttext-${PROJECT_VERSION}-sources.jar .
+          mv jfasttext-${PROJECT_VERSION}-sources.jar ../output/jfasttext-${PROJECT_VERSION}-sources.jar
+          cd ..
+          rm -rf work
+        
       - uses: actions/upload-artifact@v3
         with:
           name: Package multi-platform
-          path: ~/download/*.jar
+          path: ~/download/output/*.jar
     
   deploy_snapshot:
     runs-on: ubuntu-latest
@@ -152,7 +189,7 @@ jobs:
           cd ~/download
           PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           mvn --batch-mode release:update-versions -DdevelopmentVersion=${PROJECT_VERSION}-SNAPSHOT
-          mvn gpg:sign-and-deploy-file -Durl=https://s01.oss.sonatype.org/content/repositories/snapshots/ -DrepositoryId=ossrh -DpomFile=pom.xml -Dfile=jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar
+          mvn gpg:sign-and-deploy-file -Durl=https://s01.oss.sonatype.org/content/repositories/snapshots/ -DrepositoryId=ossrh -DpomFile=pom.xml -Dfile=jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar -Djavadoc=jfasttext-${PROJECT_VERSION}-javadoc.jar -Dsources=jfasttext-${PROJECT_VERSION}-sources.jar
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
@@ -189,7 +226,7 @@ jobs:
           cd ~/download
           PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           cp jfasttext-${PROJECT_VERSION}-SNAPSHOT.jar jfasttext-${PROJECT_VERSION}.jar
-          mvn gpg:sign-and-deploy-file -Durl=https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=ossrh -DpomFile=pom.xml -Dfile=jfasttext-${PROJECT_VERSION}.jar
+          mvn gpg:sign-and-deploy-file -Durl=https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=ossrh -DpomFile=pom.xml -DrepositoryId=ossrh -DpomFile=pom.xml -Dfile=jfasttext-${PROJECT_VERSION}.jar -Djavadoc=jfasttext-${PROJECT_VERSION}-javadoc.jar -Dsources=jfasttext-${PROJECT_VERSION}-sources.jar
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
