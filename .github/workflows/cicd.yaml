@@ -56,6 +56,7 @@ jobs:
       - shell: pwsh
         run: |
           $projectversion=mvn help:evaluate "-Dexpression=project.version" -q -DforceStdout | Out-String
+          $projectversion=$projectversion.trim()
           New-Item -Path . -Name "staging" -ItemType "directory"
           Copy-Item ".\target\jfasttext-$projectversion.jar" -Destination ".\staging\jfasttext-windows.jar"
           Copy-Item ".\target\jfasttext-$projectversion-javadoc.jar" -Destination ".\staging\jfasttext-windows-javadoc.jar"
