@@ -55,11 +55,12 @@ jobs:
         run: mvn --batch-mode --update-snapshots package 
       - shell: pwsh
         run: |
-          $PROJECT_VERSION=(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) | Out-String
+          $projectversion = (mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) | Out-String
+          echo $projectversion
           New-Item -Path . -Name "staging" -ItemType "directory"
-          Copy-Item "target/jfasttext-$PROJECT_VERSION.jar" -Destination staging/jfasttext-windows.jar
-          Copy-Item "target/jfasttext-$PROJECT_VERSION-javadoc.jar" -Destination staging/jfasttext-windows-javadoc.jar
-          Copy-Item "target/jfasttext-$PROJECT_VERSION-sources.jar" -Destination staging/jfasttext-windows-sources.jar
+          Copy-Item ".\target\jfasttext-$projectversion.jar" -Destination ".\staging\jfasttext-windows.jar"
+          Copy-Item ".\target\jfasttext-$projectversion-javadoc.jar" -Destination ".\staging\jfasttext-windows-javadoc.jar"
+          Copy-Item ".\target\jfasttext-$projectversion-sources.jar" -Destination ".\staging\jfasttext-windows-sources.jar"
       - uses: actions/upload-artifact@v3
         with:
           name: Package Windows
