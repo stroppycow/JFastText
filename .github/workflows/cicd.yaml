@@ -55,7 +55,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots package 
       - shell: pwsh
         run: |
-          $projectversion = (mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) | Out-String
+          $projectversion=mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec | Out-String
           echo $projectversion
           New-Item -Path . -Name "staging" -ItemType "directory"
           Copy-Item ".\target\jfasttext-$projectversion.jar" -Destination ".\staging\jfasttext-windows.jar"
