@@ -37,7 +37,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: Package Linux
-          path: my_docker_volume
+          path: /my_docker_volume
   
   build_windows:
     runs-on: windows-latest
