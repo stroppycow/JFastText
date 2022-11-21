@@ -6,7 +6,7 @@ jobs:
   build_linux:
     runs-on: ubuntu-latest
     container:
-      image: debian:7
+      image: debian/eol:wheezy
 
     steps:
 
