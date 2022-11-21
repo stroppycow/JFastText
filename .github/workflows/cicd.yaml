@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: debian/eol:wheezy
+      volumes:
+        - my_docker_volume:/staging
 
     steps:
 
@@ -29,14 +31,13 @@ jobs:
           git submodule update --init --recursive
           mvn --batch-mode --update-snapshots package
           PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-          mkdir staging
-          cp target/jfasttext-$PROJECT_VERSION.jar ./staging/jfasttext-linux.jar
-          cp target/jfasttext-$PROJECT_VERSION-javadoc.jar ./staging/jfasttext-linux-javadoc.jar
-          cp target/jfasttext-$PROJECT_VERSION-sources.jar ./staging/jfasttext-linux-sources.jar
+          cp target/jfasttext-$PROJECT_VERSION.jar /staging/jfasttext-linux.jar
+          cp target/jfasttext-$PROJECT_VERSION-javadoc.jar /staging/jfasttext-linux-javadoc.jar
+          cp target/jfasttext-$PROJECT_VERSION-sources.jar /staging/jfasttext-linux-sources.jar
       - uses: actions/upload-artifact@v1
         with:
           name: Package Linux
-          path: staging
+          path: my_docker_volume
   
   build_windows:
     runs-on: windows-latest
