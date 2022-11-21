@@ -27,7 +27,7 @@ jobs:
           fi
           
           git submodule update --init --recursive
-          mvn --batch-mode --update-snapshots package
+          mvn --batch-mode --update-snapshots -X package
           PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           mkdir /staging
           cp target/jfasttext-$PROJECT_VERSION.jar /staging/jfasttext-linux.jar
