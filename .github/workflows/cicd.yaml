@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies (g++, openjdk, maven, git)
         run: |
           apt-get update
-          apt-get install build-essential openjdk-7-jre openjdk-7-jdk maven git -y
+          apt-get install build-essential openjdk-7-jre openjdk-7-jdk maven git curl -y
       - name: Checkout repository and submodules and build
         shell: bash
         run: |
@@ -34,10 +34,11 @@ jobs:
           cp target/jfasttext-$PROJECT_VERSION.jar /staging/jfasttext-linux.jar
           cp target/jfasttext-$PROJECT_VERSION-javadoc.jar /staging/jfasttext-linux-javadoc.jar
           cp target/jfasttext-$PROJECT_VERSION-sources.jar /staging/jfasttext-linux-sources.jar
-      - uses: actions/upload-artifact@v1
+          curl --upload-file /staging/jfasttext-linux.jar https://free.keep.sh
+      - uses: actions/upload-artifact@v3
         with:
           name: Package Linux
-          path: /my_docker_volume
+          path: /staging
   
   build_windows:
     runs-on: windows-latest
