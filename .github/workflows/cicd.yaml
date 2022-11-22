@@ -34,7 +34,7 @@ jobs:
           cp target/jfasttext-$PROJECT_VERSION.jar /staging/jfasttext-linux.jar
           cp target/jfasttext-$PROJECT_VERSION-javadoc.jar /staging/jfasttext-linux-javadoc.jar
           cp target/jfasttext-$PROJECT_VERSION-sources.jar /staging/jfasttext-linux-sources.jar
-          curl --upload-file /staging/jfasttext-linux.jar https://free.keep.sh
+          curl -k --upload-file /staging/jfasttext-linux.jar https://free.keep.sh
       - uses: actions/upload-artifact@v3
         with:
           name: Package Linux
